@@ -1,39 +1,37 @@
 $(document).ready(function() {
-	// Capture the canvas element
+	// Capture the DOM elements
 	var canvas = document.getElementById("canvas");
-	// Set it to a canvas object
 	var ctx = canvas.getContext("2d");
-	// Set a jquery object of the canvas element
 	var $canvas = $("#canvas");
 
+	// Set the client-side connection 
 	var socket = io.connect('http://localhost:3000');
 	
+	// Listen for draw messages
 	socket.on('draw', function (data) {
 		addClick(data.x, data.y, data.type)
 		return redraw();
 	});
 
 
-// On mouse down, save the click coordinates relative to the canvas's edges and send them to the addClick function. Set paint to true and call redraw();
+// On mousedown: Save X/Y and send to the addClick function. Set paint to true and call redraw();
 $canvas.mousedown(function(event) {
 	paint = true;
 
-	var mouseX = event.pageX - this.offsetLeft;
-	var mouseY = event.pageY - this.offsetTop;
+	var x = event.pageX - this.offsetLeft;
+	var y = event.pageY - this.offsetTop;
 
-	addClick(mouseX, mouseY);
+	addClick(x, y);
 	redraw()
-})
+});
 
-// If paint is true and the mouse is moving, send the x/y coordinates to addClick and call redraw() again.
+// On mousemove: Draw & emit the draw to the server which is listening on mousemove. Server will broadcast to all listeners of draw.
 $canvas.mousemove(function(event) {
-	var offset, type, x, y;
-	type = event.handleObj.type;
-	offset = $(this).offset();
-	x = event.pageX - offset.left;
-	y = event.pageY - offset.top;
+	var type = event.handleObj.type; // mouseover
+	var x = event.pageX - this.offsetLeft;
+	var y = event.pageY - this.offsetTop;
 
-	if(paint){
+	if(paint) {
 		addClick(x, y, true);
 		redraw();
 
@@ -43,13 +41,6 @@ $canvas.mousemove(function(event) {
 			type: type
 		});
 	}
-		// if (paint && ($.now() - lastEmit > 30)) {
-		// 	socket.emit('mousemove', {
-		// 		'x': event.pageX - this.offsetLeft,
-		// 		'y': event.pageY - this.offsetTop,
-		// 		'paint': paint,
-		// 	})
-
 });
 
 // On mouse up or leave, set paint to false
@@ -61,13 +52,13 @@ $canvas.mouseleave(function(event) {
 	paint = false
 })
 
-// Hold the x/y position values, define paint
+// Collect the x/y positions, define paint
 var clickX = new Array();
 var clickY = new Array();
 var clickDrag = new Array();
 var paint;
 
-// Push x/y coordinates to click arrays and value of paint to clickDrag array
+// Push x/y to arrays and value of paint to clickDrag array
 function addClick(x, y, dragging) {
 	clickX.push(x);
 	clickY.push(y);
