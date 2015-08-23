@@ -38,15 +38,19 @@ server.on('listening', onListening);
 // I can use io.on here but not io.connect
 // I can use io.connect on the index.js file (public)
 // io.on connection has the client handshake request
+
 var io = require('socket.io').listen(server.listen(port));
 
-io.sockets.on("connection", function(socket){
+io.sockets.on("connection", function (socket) {
   console.log("This should happen in the server");
     
-  socket.emit('message', { message: "welcome to chat" });
-  socket.on('receive', function(data) {
-    io.sockets.emit('message', data);
-  })
+  socket.on('mousemove', function (data) {
+    socket.broadcast.emit('draw', {
+      x: data.x,
+      y: data.y,
+      type: data.type
+    });
+  });
 })
   
 
