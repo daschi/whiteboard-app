@@ -1,12 +1,36 @@
 $(document).ready(function() {
-
 	// Capture the canvas element
 	var canvas = document.getElementById("canvas");
 	// Set it to a canvas object
 	var ctx = canvas.getContext("2d");
 	// Set a jquery object of the canvas element
 	var $canvas = $("#canvas");
+	var socket = io.connect('http://localhost:3000');
+	
+	var messages = [];
+	var display = document.getElementsByTagName("output");
+	var button = document.getElementById("button");
+	var content = document.getElementById("message");
 
+	socket.on('message', function(data) {
+		console.log(data);
+		console.log("This log happens in the browser")
+		if (data.message) {
+			messages.push(data.message);
+			var html = '';
+			for(var i = 0; i < messages.length; i++) {
+				html += messages[i];
+			}
+			display[0].innerHTML = html;
+		}
+		else {
+			console.log("This is not working out: " + data);
+		}
+	});
+
+button.onclick = function() {
+	socket.emit('receive', { message: content.value })
+}
 // On mouse down, save the click coordinates relative to the canvas's edges and send them to the addClick function. Set paint to true and call redraw();
 	$canvas.mousedown(function(event) {
 		var mouseX = event.pageX - this.offsetLeft;
@@ -17,16 +41,11 @@ $(document).ready(function() {
 		redraw()
 	})
 
-	$canvas.mousedown(function(event) {
-		// do socket.io stuff
-	})
-
 // If paint is true and the mouse is moving, send the x/y coordinates to addClick and call redraw() again.
 	$canvas.mousemove(function(event) {
 		if(paint) {
 			addClick(event.pageX - this.offsetLeft, event.pageY - this.offsetTop, true);
 			redraw();
-
 		}
 	});
 

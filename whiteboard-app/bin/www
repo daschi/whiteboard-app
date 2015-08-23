@@ -4,7 +4,6 @@
  * Module dependencies.
  */
 
-
 var app = require('../app');
 var debug = require('debug')('whiteboard-app:server');
 var http = require('http');
@@ -36,15 +35,20 @@ server.on('listening', onListening);
 /**
  * Listen to sockets
  */
+// I can use io.on here but not io.connect
+// I can use io.connect on the index.js file (public)
+// io.on connection has the client handshake request
+var io = require('socket.io').listen(server.listen(port));
 
-var io = require('socket.io').listen(server);
-
-io.on('connection', function(socket) {
-  console.log("Someone joined")
-  socket.on('message', function(data) {
-    console.log("HI");
+io.sockets.on("connection", function(socket){
+  console.log("This should happen in the server");
+    
+  socket.emit('message', { message: "welcome to chat" });
+  socket.on('receive', function(data) {
+    io.sockets.emit('message', data);
   })
 })
+  
 
 /**
  * Normalize a port into a number, string, or false.
