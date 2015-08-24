@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var mongoose = require('mongoose');
 
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -7,6 +8,17 @@ router.get('/', function(req, res) {
   // console.log(req.cookies['connect.sid']);
 });
 
+/* GET users page. */
+router.get('/users', function(req, res) {
+  mongoose.model('users').find(function(err, users) {
+    res.send(users);
+  })
+})
+
+/* GET todo list page. */
+router.get('/todo', function(req, res) {
+  res.send("hello from the todo route!");
+})
 // /* GET Login page */
 // router.get('/login', function(req, res, next) {
 //   res.render('login', {title: 'Simple Whitebord', name: 'Daniela'});
