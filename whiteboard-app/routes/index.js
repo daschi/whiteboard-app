@@ -1,7 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var session = require('client-sessions');
-
 /* GET home page. */
 router.get('/', function(req, res) {
   res.render('index', { title: 'Simple Whiteboard', name: "Daniela" });

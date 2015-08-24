@@ -3,111 +3,113 @@ $(document).ready(function() {
 	var canvas = document.getElementById("canvas");
 	var ctx = canvas.getContext("2d");
 	var $canvas = $("#canvas");
+	var strokeStyle = "black";
+	var lineWidth = 10;
+	var drawing;
 
 	// Set the client-side connection 
 	var socket = io.connect('http://localhost:3000');
 
-	// Draw when server emits draw messages
+	// Listen for draw messages from server
 	socket.on('draw', function (data) {
-		addClick(data.x, data.y, data.type)
-		return redraw();
+		console.log("on draw from the client")
+		draw(data);
 	});
 
-	// On mousedown: Save X/Y and send to the addClick function. Set drawing to true and call redraw();
-	$canvas.mousedown(function(event) {
-		drawing = true;
+// Begin draw	
+$canvas.mousedown(function(event) {
+	drawing = true;
+	
+	currentX = event.pageX - this.offsetLeft;
+	currentY = event.pageY - this.offsetTop;
 
-		var x = event.pageX - this.offsetLeft;
-		var y = event.pageY - this.offsetTop;
+});
 
-		addClick(x, y);
-		redraw()
-	});
+// End draw
+$canvas.mouseup(function(event) {
+	drawing = false;
+})
 
-	// On mousemove: Draw & emit the draw to the server which is listening on mousemove. Server will broadcast to all listeners of draw.
-	$canvas.mousemove(function(event) {
-		var type = event.handleObj.type; // mouseover
-		var x = event.pageX - this.offsetLeft;
-		var y = event.pageY - this.offsetTop;
+$canvas.mouseleave(function(event) {
+	drawing = false
+})
 
-		if(drawing) {
-			addClick(x, y, true);
-			redraw();
+// Draw
+$canvas.mousemove(function(event){
 
-			socket.emit('mousemove', {
-				x: x,
-				y: y,
-				type: type
-			});
-		}
-	});
+	if (drawing) {
+		prevX = currentX;
+		prevY = currentY;
+		currentX = event.pageX - this.offsetLeft;
+		currentY = event.pageY - this.offsetTop;
 
-	// On mouse up or leave, set drawing to false
-	$canvas.mouseup(function(event) {
-		drawing = false;
-	});
-
-	$canvas.mouseleave(function(event) {
-		drawing = false
-	})
-
-	// Collect the x/y positions, define drawing
-	var clickX = new Array();
-	var clickY = new Array();
-	var clickDrag = new Array();
-	var drawing;
-
-	// Push x/y to arrays and value of drawing to clickDrag array
-	function addClick(x, y, dragging) {
-		clickX.push(x);
-		clickY.push(y);
-		clickDrag.push(dragging);
+		socket.emit('draw', {
+				x: currentX,
+				y: currentY,
+				prevX: prevX,
+				prevY: prevY,
+				strokeStyle: strokeStyle,
+				lineWidth: lineWidth,
+		});
 	}
 
-	// 1. Clear the canvas from top to bottom
-	// 2. Set stroke style and line
-	// 3. For length of clickX array (includes mousemove)
-	// 4. Begin path 
-	// 5. if clickDrag is true
-	// 6. Iterate through the click array backwards to reset each new starting point
-	// 7. Else, move it back by 1, or essentially don't move at all. 
-	// 8. Draw line from original x/y coordinates to the new points of the path and close path
+});
 
-	function redraw() {
+$(".color").on('click', function(event) {
+	event.preventDefault();
+	strokeStyle = $(this).css( "background-color" )
+})
 
-		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+$(".line-width").on('click', function(event) {
+	event.preventDefault();
+	lineWidth = $(this).attr('id')
+})
 
-		ctx.strokeStyle = "#df4b26";
-		ctx.lineJoin = "round";
-		ctx.lineWidth = 10;
+function draw(data) {
+	ctx.beginPath();
+	ctx.strokeStyle = data.strokeStyle;
+	ctx.lineJoin = "round";
+	ctx.lineWidth = data.lineWidth;
+	ctx.moveTo(data.prevX, data.prevY);
+	ctx.lineTo(data.x, data.y);
+	ctx.closePath();
+	ctx.stroke();
+}
+	
+// Set username
+var username;
+$('form.username').submit(function() {
+	username = $('#name').val();
+	debugger
+	$(this).hide();
+})
 
-		for(var i = 0; i < clickX.length; i++) {
-			ctx.beginPath();
-			if (clickDrag[i] && i) {
-				ctx.moveTo(clickX[i-1], clickY[i-1]);
-			}
-			else {
-				ctx.moveTo(clickX[i]-1, clickY[i]);
-			}
-			ctx.lineTo(clickX[i], clickY[i]);
-			ctx.closePath();
-			ctx.stroke();
+// Send chat messages
+	$('form.send-chat').submit(function() {
+		var message = { 
+			name: username, 
+			text: $('#message').val()
 		}
-	}
 
-	// Send chat messages
-	$('form').submit(function() {
-		socket.emit('chat message', $('#message').val());
+		socket.emit('chat message', message);
 		$('#message').val('');
 		return false;
 	});
 
 	// Listen for chat messages
 	socket.on('chat message', function(message) {
-		$('#chatbox').append("<p>User: " + message + "</p>");
+		$('#chatbox').append("<p>" + message.name + ": " + message.text + "</p>");
 	});
 
 });
+
+function addChatTyping(data){
+
+}
+
+function removeChatTyping(data){
+	
+}
 
 
 // GOALS FOR SUNDAY:

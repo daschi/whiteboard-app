@@ -9,12 +9,19 @@
 <body>
   <div class="container">
     <h1><%= title %></h1>
-    <a href="/login">Login</a>
     <p>
       Welcome. This whiteboard is real-time. I used Node.js as the server, Socket.io for real-time collaboration, Express as the web framework and HTML5 Canvas. It's so cool! 
     </p>
-  <% include partials/canvas %>
-  <% include partials/chat %>
+    <div class="username-container">
+      <form class="username">
+        <p>Enter a username!</p>
+        <label for="name">Name:</label>
+        <input id="name" type="text"/>
+        <input id="submit-name" type="submit"/>
+      </form>
+    </div>
+    <% include partials/canvas %>
+    <% include partials/chat %>
   </div>
   <h6>Daniela</h6>
   <script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
@@ -24,9 +31,9 @@
 
 
 
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+

@@ -45,15 +45,16 @@ io.sockets.on("connection", function (socket) {
   // console.log("This should happen in the server");
   
   // Canvas
-  socket.on('mousemove', function (data) {
+  socket.on('draw', function (data) {
+    console.log("on draw from the server")
     // Data is sent in as: {x: data.x, y: data.y, type: data.type }
-    socket.broadcast.emit('draw', data);
+    io.emit('draw', data);
   });
 
   // Chat 
   socket.on('chat message', function(message){
     io.emit('chat message', message);
-  })
+  });
 
 })
   
