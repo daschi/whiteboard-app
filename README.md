@@ -57,6 +57,46 @@ The express application file structure looks like this:
     └── layout.ejs
 ```
 
+# Socket.io
+WOW, sockets are so cool! By far I spent the most time researching and reading about websockets. I'd like to learn more about the different options you could implement, since for now I've just done some simple emitting and listening. Here's some introductory code to get anyone started on Socket.io:
+
+The following is assuming that you've created a variable 'server' using the http module and specified a port to listen on.
+### SERVER SIDE: In your bin/www file (or whichever is your server-side JS file):
+```
+var io = require('socket.io').listen(server.listen(port));
+
+io.sockets.on("connection", function (socket) {
+  
+  socket.on('draw', function (data) {
+    // Data is sent in as: {x: data.x, y: data.y, etc. }
+    io.emit('draw', data);
+  });
+})
+```
+```io.sockets.on``` sets up the initial connection when a new user connects to the server. The server is listening for 'draw' messages (or emits) from the client. When it hears a 'draw' emit, it will invoke a callback function that takes as a parameter the data sent along with the 'draw' message from the client. Then, the websocket server (io) will emit the same 'draw' message back to the other clients listening on the server with the new data it received. 
+### CLIENT SIDE: In your public/javascripts/index.js file
+Set up the socket connection on the client side:
+```
+var socket = io.connect('http://localhost:3000');
+socket.on('draw', function (data) {
+	draw(data);
+});
+```
+The client is listening for 'draw' messages and a data object from the server. When the message and object are received, it will pass the data to the draw(); function that is defined within the client-side JS file (index.js). 
+
+The following variables are set via an event listener on Canvas for mousedown events, so when the user is drawing on the whiteboard, it captures the x/y coordinates (not shown here). 
+```
+socket.emit('draw', {
+				x: currentX,
+				y: currentY,
+				prevX: prevX,
+				prevY: prevY,
+				strokeStyle: strokeStyle,
+				lineWidth: lineWidth,
+		});
+		```
+	socket.emit occurs within the mousedown eventlistener on the canvas. On mousedown, the socket emits the data and the message 'draw' to the server, which then receives it and broadcasts it to everyone else listening for 'draw'. Everyone else who is listening will receive the data (the x/y coordinates, strokeStyle and lineWidth) and invoke the draw(data); function with the new information from the server. IN REAL TIME. 
+	
 # Future Implementations
  - Synced video play
  - Implementing this feature within my sound & script language app
