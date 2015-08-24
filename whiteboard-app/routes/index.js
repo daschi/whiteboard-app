@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
+
 /* GET home page. */
 router.get('/', function(req, res) {
   res.render('index', { title: 'Simple Whiteboard', name: "Daniela" });
   // console.log(req.cookies['connect.sid']);
-  // console.log(req.session);
 });
 
 // /* GET Login page */
