@@ -86,16 +86,9 @@ The client is listening for 'draw' messages and a data object from the server. W
 
 The following variables are set via an event listener on Canvas for mousedown events, so when the user is drawing on the whiteboard, it captures the x/y coordinates (not shown here). 
 ```
-socket.emit('draw', {
-				x: currentX,
-				y: currentY,
-				prevX: prevX,
-				prevY: prevY,
-				strokeStyle: strokeStyle,
-				lineWidth: lineWidth,
-		});
-		```
-	socket.emit occurs within the mousedown eventlistener on the canvas. On mousedown, the socket emits the data and the message 'draw' to the server, which then receives it and broadcasts it to everyone else listening for 'draw'. Everyone else who is listening will receive the data (the x/y coordinates, strokeStyle and lineWidth) and invoke the draw(data); function with the new information from the server. IN REAL TIME. 
+socket.emit('draw', { x: currentX, y: currentY, prevX: prevX, prevY: prevY, strokeStyle: strokeStyle, lineWidth: lineWidth });
+```
+socket.emit occurs within the mousedown eventlistener on the canvas. On mousedown, the socket emits the data and the message 'draw' to the server, which then receives it and broadcasts it to everyone else listening for 'draw'. Everyone else who is listening will receive the data (the x/y coordinates, strokeStyle and lineWidth) and invoke the draw(data); function with the new information from the server. IN REAL TIME. 
 	
 # Future Implementations
  - Synced video play
