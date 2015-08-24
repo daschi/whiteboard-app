@@ -1,5 +1,5 @@
 # Simple Whiteboard + Chat
-Simple Whiteboard + Chat is an app I made to learn new about new technologies:
+Simple Whiteboard + Chat is an app I made to learn about new technologies:
  - Node.js Server
  - Express.js for web framework
  - Socket.io for websockets
