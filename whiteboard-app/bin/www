@@ -33,28 +33,32 @@ server.on('listening', onListening);
 
 
 /**
- * Listen to sockets
+ * Set up websocket with Socket.io
  */
-// I can use io.on here but not io.connect
-// I can use io.connect on the index.js file (public)
-// io.on connection has the client handshake request
+// io.sockets.on connection has the client handshake request
 
 var io = require('socket.io').listen(server.listen(port));
 
 io.sockets.on("connection", function (socket) {
   // console.log("This should happen in the server");
   
-  // Canvas
+  // Listen/emit for Canvas
   socket.on('draw', function (data) {
     console.log("on draw from the server")
     // Data is sent in as: {x: data.x, y: data.y, type: data.type }
     io.emit('draw', data);
   });
 
-  // Chat 
+  // Listen/emit for Chat 
   socket.on('chat message', function(message){
     io.emit('chat message', message);
   });
+
+  // Listen/emit for Video
+  socket.on('timeupdate', function (time) {
+    console.log("socket ON server for video")
+    socket.broadcast.emit('timeupdate', time);
+  })
 
 })
   
