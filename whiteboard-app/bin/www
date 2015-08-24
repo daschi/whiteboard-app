@@ -1,0 +1,124 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var app = require('../app');
+var debug = require('debug')('whiteboard-app:server');
+var http = require('http');
+var mongojs = require('mongojs')
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port, function(){
+  console.log("listening on port 3000")
+});
+server.on('error', onError);
+server.on('listening', onListening);
+
+
+/**
+ * Set up websocket with Socket.io
+ */
+// io.sockets.on connection has the client handshake request
+
+var io = require('socket.io').listen(server.listen(port));
+
+io.sockets.on("connection", function (socket) {
+  // console.log("This should happen in the server");
+  
+  // Listen/emit for Canvas
+  socket.on('draw', function (data) {
+    console.log("on draw from the server")
+    // Data is sent in as: {x: data.x, y: data.y, type: data.type }
+    io.emit('draw', data);
+  });
+
+  // Listen/emit for Chat 
+  socket.on('chat message', function(message){
+    io.emit('chat message', message);
+  });
+
+  // Listen/emit for Video
+  socket.on('timeupdate', function (time) {
+    console.log("socket ON server for video")
+    socket.broadcast.emit('timeupdate', time);
+  })
+
+})
+  
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}
