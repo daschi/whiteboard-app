@@ -10,7 +10,6 @@ router.get('/', function(req, res) {
   res.render('index', { title: 'Simple Whiteboard', name: "Daniela" });
 });
 
-
 router.get('/users', function(req, res) {
   var db = req.db;
   var collection = db.get('usercollection');
