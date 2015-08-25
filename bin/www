@@ -54,12 +54,10 @@ io.sockets.on("connection", function (socket) {
     io.emit('chat message', message);
   });
 
-  // Listen/emit for Video
-  socket.on('play', function (time) {
-    console.log("socket ON server for video")
-    socket.broadcast.emit('play', time);
+  // Listen and emit that user joined
+  socket.on('user joined', function(user) {
+    io.emit('user joined', user)
   })
-
 })
 
 
