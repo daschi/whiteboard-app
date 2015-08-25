@@ -1,12 +1,21 @@
-* {
-	box-sizing: border-box;
-}
+html {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+
+*, *:before, *:after {
+  -webkit-box-sizing: inherit;
+  -moz-box-sizing: inherit;
+  box-sizing: inherit; }
 
 body {
 	font: Helvetica, Arial;
-  padding: 50px;
+  padding-left: 2em;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
+
+/*.debug {
+  border: 1px solid red; }*/
 
 a {
   color: #00B7FF;
@@ -16,14 +25,19 @@ canvas {
 	border: 2px solid #C4F3DA;
 }
 
-.chatbox {
-	border: 2px solid #75E1CF;
-	width: 500px;
-	height: 100%;
-}
-
 .input-box {
 	padding: 3px;
+}
+
+.chatbox {
+	disply: inline;
+	height: 35em;
+	width: 30em;
+	border: 1px solid rgb(130, 224, 255);
+}
+
+.send-chat {
+	padding-top: 2em;
 }
 
 #message {
@@ -53,4 +67,7 @@ button {
 	border: 1px dotted gray;
 }
 
+.username-container {
+	padding-bottom: 1em;
+}
 

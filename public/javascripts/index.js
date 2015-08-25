@@ -79,17 +79,22 @@ $(document).ready(function() {
 		ctx.stroke();
 	}
 
-// Set username -- Need to fix this
+// Set username
 	var username;
-	$('form.username').submit(function() {
-		username = $('#name').val();
+	$('form.username').submit(function(event) {
+		event.preventDefault();
+		name = $('#name').val();
 		$(this).hide();
+
+		// Emit that user has joined
+		var user = {name: name}
+		socket.emit('user joined', user);
 	})
 
 // Send chat messages
 	$('form.send-chat').submit(function() {
 		var message = {
-			name: username,
+			name: name,
 			text: $('#message').val()
 		}
 
@@ -98,36 +103,14 @@ $(document).ready(function() {
 		return false;
 	});
 
+	// Update chatbox to show user has joined
+	socket.on('user joined', function(user) {
+		$('#chatbox').append("<p>" + user.name + " has joined the chatroom</p>");
+	})
+
 // Listen for chat messages
 	socket.on('chat message', function(message) {
 		$('#chatbox').append("<p>" + message.name + ": " + message.text + "</p>");
-	});
-
-// Set video element to variable and attempt to emit it - Need to fix this
-	var video = document.getElementById('video-id')
-
-	$('video').on('timeupdate', function(event){
-		// if I am controller
-			// send the video's play, controls and currentime to everyone but me
-		while (!video.ended){
-			// for (var i = 0; i <= this.duration; i++){
-				// (this.currentTime)
-				socket.emit('play');
-				console.log("EMIT client video: " + this.currentTime);
-				// this.currentTime += i
-			// }
-		}
-	});
-
-// listen for messages from the server from anyone who is not me
-// message may include play, pause or current time data
-// Close the connection once the video ends
-	socket.on('play', function (){
-		while (!video.ended){
-		video.play();
-		// check video duration
-		console.log("LISTEN client video:" + video.currentTime);
-		}
 	});
 
 }); // end document ready
