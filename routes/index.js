@@ -52,9 +52,7 @@ router.post('/users/create', function(req, res) {
     });
 });
 
-
-
-
+// Learning about setting sessions
 // /* GET Login page */
 // router.get('/login', function(req, res, next) {
 //   res.render('login', {title: 'Simple Whitebord', name: 'Daniela'});
