@@ -7,6 +7,8 @@ Simple Whiteboard + Chat is an app I made to learn about new technologies:
 
 I chose to pursue these technologies because I'm interested in collaborative web spaces for teaching and learning foreign languages. Online language classes are much cooler when you can write, draw, play and listen to videos, and chat together at the same time. I want to learn how these technologies work so that I'm better prepared to enter the field of real-time collaborative web services.
 
+The project holds a whiteboard with various colors and line widths that multiple people can draw on from different browsers. It also includes a chatbox below the canvas. I am experimenting with learning how to sync video play across sockets, so there is also another branch 'sync-video' that includes the code I'm trying to work with to sync the video. It is still in progress. 
+
 Below are some snippets of what I learned during this process. 
 
 # Node.js
@@ -94,3 +96,16 @@ socket.emit occurs within the mousedown eventlistener on the canvas. On mousedow
  - Synced video play
  - Implementing this feature within my sound & script language app
  - Personal video/voice sharing
+
+# Contribute
+If you'd like to contribute to the whiteboard + chat portion, clone the repo from master and submit a pull request. 
+If you'd like to contribute to syncing the video-play, clone the video-play branch and submit a pull request to that branch.
+
+# Running the Application
+To run the application locally, clone the repo to your local machine. 
+While you're inside Desktop/whiteboard-app directory, type the following in your command line:
+'''
+npm install
+node bin/www
+'''
+This will launch the server to listen on port 3000, so you can use the app when you navigate to http://localhost:3000. 
