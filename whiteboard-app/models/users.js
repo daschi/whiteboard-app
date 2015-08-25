@@ -1,11 +1,11 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+// var mongoose = require('mongoose');
+// var Schema = mongoose.Schema;
 
-var usersSchema = new Schema({
-  name: String,
-  email: String,
-},
-{collection: 'user'}
-);
+// var usersSchema = new Schema({
+//   name: String,
+//   email: String,
+// },
+// {collection: 'user'}
+// );
 
-mongoose.model('users', usersSchema);
+// mongoose.model('users', usersSchema);
