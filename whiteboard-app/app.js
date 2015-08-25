@@ -1,23 +1,33 @@
 var express = require('express');
-var app = express();
 var path = require('path');
-var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
-var session = require('express-session');
-var logger = require('morgan');
-var routes = require('./routes/index');
-var fs = require('fs'); // file system library
-var mongoose = require('mongoose');
-var db = require('./data/db/db');
 var favicon = require('serve-favicon');
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
+
+// MongoDB Setup
+var mongoose = require('mongoose');
+var mongo = require('mongodb')
+var monk = require('monk')
+var db = monk('localhost:27017/whiteboard-app')
+
+var session = require('express-session');
+var routes = require('./routes/index');
+var users = require('./routes/users');
+var fs = require('fs'); // file system library
+
+var app = express();
+
+// view engine setup
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// Other dependencies/middlware
 
 // configure app (in app.js, unless it's the server then it's in bin/www)
 // use middleware (in app.js)
 // define routes (in routes folder)
 
-// view engine setup
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
 
 // Connect mongodb database
 // mongoose.connect("db.url");
@@ -25,18 +35,29 @@ app.set('views', path.join(__dirname, 'views'));
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
-
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Session requires 3 things: secret, saveuninitialized, resave
 app.use(session({ secret: "secretSecret", saveUninitialized: true, resave: true }));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
-app.use(express.static(path.join(__dirname, 'public')));
+// make the db accessible to our router
+// By adding this function to app.use, we're adding the db object to every HTTP request our app makes.
+app.use(function(req, res, next){
+  req.db = db;
+  next();
+})
 
 app.use('/', routes);
+app.use('/users', users);
+
+
+// load all files in models directory
+fs.readdirSync(__dirname + '/models').forEach(function(filename){
+    require(__dirname + '/models/' + filename);
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -45,7 +66,7 @@ app.use(function(req, res, next) {
   next(err);
 });
 
-// error handlers
+/// error handlers
 
 // development error handler
 // will print stacktrace
@@ -58,11 +79,6 @@ if (app.get('env') === 'development') {
     });
   });
 }
-
-// load all files in models directory
-fs.readdirSync(__dirname + '/models').forEach(function(filename){
-    require(__dirname + '/models/' + filename);
-})
 
 
 // production error handler
