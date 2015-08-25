@@ -55,9 +55,9 @@ io.sockets.on("connection", function (socket) {
   });
 
   // Listen/emit for Video
-  socket.on('timeupdate', function (time) {
+  socket.on('play', function (time) {
     console.log("socket ON server for video")
-    socket.broadcast.emit('timeupdate', time);
+    socket.broadcast.emit('play', time);
   })
 
 })

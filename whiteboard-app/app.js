@@ -6,7 +6,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 // MongoDB Setup
-var mongoose = require('mongoose');
 var mongo = require('mongodb')
 var monk = require('monk')
 var db = monk('localhost:27017/whiteboard-app')

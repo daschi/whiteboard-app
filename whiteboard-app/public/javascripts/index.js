@@ -7,7 +7,7 @@ $(document).ready(function() {
 	var lineWidth = 10;
 	var drawing;
 
-// Set the client-side connection 
+// Set the client-side connection
 	var socket = io.connect('http://localhost:3000');
 
 // Listen for draw messages from server
@@ -16,10 +16,10 @@ $(document).ready(function() {
 		draw(data);
 	});
 
-// Begin draw	
+// Begin draw
 	$canvas.mousedown(function(event) {
 		drawing = true;
-		
+
 		currentX = event.pageX - this.offsetLeft;
 		currentY = event.pageY - this.offsetTop;
 
@@ -62,6 +62,7 @@ $(document).ready(function() {
 					strokeStyle: strokeStyle,
 					lineWidth: lineWidth,
 			});
+			console.log("from emit");
 		}
 
 	});
@@ -77,7 +78,7 @@ $(document).ready(function() {
 		ctx.closePath();
 		ctx.stroke();
 	}
-	
+
 // Set username -- Need to fix this
 	var username;
 	$('form.username').submit(function() {
@@ -87,8 +88,8 @@ $(document).ready(function() {
 
 // Send chat messages
 	$('form.send-chat').submit(function() {
-		var message = { 
-			name: username, 
+		var message = {
+			name: username,
 			text: $('#message').val()
 		}
 
@@ -106,18 +107,27 @@ $(document).ready(function() {
 	var video = document.getElementById('video-id')
 
 	$('video').on('timeupdate', function(event){
-		if (!video.ended){
-			for (var i = 0; i <= this.duration; i++){
-				socket.emit('timeupdate', (this.currentTime));
-				console.log("EMIT client video, current time is: " + this.currentTime);
-				this.currentTime += i
-			}
+		// if I am controller
+			// send the video's play, controls and currentime to everyone but me
+		while (!video.ended){
+			// for (var i = 0; i <= this.duration; i++){
+				// (this.currentTime)
+				socket.emit('play');
+				console.log("EMIT client video: " + this.currentTime);
+				// this.currentTime += i
+			// }
 		}
 	});
 
-	socket.on('timeupdate', function (time){
-		video.currentTime = time 
-		console.log("socket ON client video, current time is: " + time);
+// listen for messages from the server from anyone who is not me
+// message may include play, pause or current time data
+// Close the connection once the video ends
+	socket.on('play', function (){
+		while (!video.ended){
+		video.play();
+		// check video duration
+		console.log("LISTEN client video:" + video.currentTime);
+		}
 	});
 
 }); // end document ready
