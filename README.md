@@ -104,8 +104,8 @@ If you'd like to contribute to syncing the video-play, clone the video-play bran
 # Running the Application
 To run the application locally, clone the repo to your local machine. 
 While you're inside Desktop/whiteboard-app directory, type the following in your command line:
-'''
+```
 npm install
 node bin/www
-'''
+```
 This will launch the server to listen on port 3000, so you can use the app when you navigate to http://localhost:3000. 
