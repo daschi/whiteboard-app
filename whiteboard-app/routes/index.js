@@ -1,10 +1,11 @@
 var express = require('express');
 var router = express.Router();
+var mongoose = require('mongoose');
 
 /* GET home page. */
-router.get('/', function(req, res) {
+router.get('/index', function(req, res) {
+  console.log(req.cookies['connect.sid']);
   res.render('index', { title: 'Simple Whiteboard', name: "Daniela" });
-  // console.log(req.cookies['connect.sid']);
 });
 
 // /* GET Login page */

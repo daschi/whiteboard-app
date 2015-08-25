@@ -7,7 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('whiteboard-app:server');
 var http = require('http');
-var mongojs = require('mongojs')
+
 /**
  * Get port from environment and store in Express.
  */
@@ -41,7 +41,7 @@ var io = require('socket.io').listen(server.listen(port));
 
 io.sockets.on("connection", function (socket) {
   // console.log("This should happen in the server");
-  
+
   // Listen/emit for Canvas
   socket.on('draw', function (data) {
     console.log("on draw from the server")
@@ -49,19 +49,19 @@ io.sockets.on("connection", function (socket) {
     io.emit('draw', data);
   });
 
-  // Listen/emit for Chat 
+  // Listen/emit for Chat
   socket.on('chat message', function(message){
     io.emit('chat message', message);
   });
 
   // Listen/emit for Video
-  socket.on('timeupdate', function (time) {
+  socket.on('play', function (time) {
     console.log("socket ON server for video")
-    socket.broadcast.emit('timeupdate', time);
+    socket.broadcast.emit('play', time);
   })
 
 })
-  
+
 
 /**
  * Normalize a port into a number, string, or false.
