@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
+var monk = require('monk');
+var app = require('../app');
 
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -28,15 +30,15 @@ router.post('/users/create', function(req, res) {
   // Set up internal db variable
   var db = req.db;
   // Get the form values from the request's body
-  var userName = req.body.username;
+  var username = req.body.username;
   var email = req.body.email;
 
   // Set the db collection we want to add to
   var collection = db.get('usercollection');
-
+  console.log(username)
   // Submit data to the database
   collection.insert({
-    "username" : userName,
+    "username" : username,
     "email" : email
     }, function (err, doc) {
       if (err) {
@@ -45,10 +47,13 @@ router.post('/users/create', function(req, res) {
       }
       else {
       // otherwise redirect user to the success page
-      res.redirect('/', { username: userName, email: email });
+      res.redirect('/users');
       }
     });
 });
+
+
+
 
 // /* GET Login page */
 // router.get('/login', function(req, res, next) {
@@ -63,3 +68,5 @@ router.post('/users/create', function(req, res) {
 // });
 
 module.exports = router;
+// module.exports = app.locals;
+
